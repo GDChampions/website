@@ -8,7 +8,7 @@
     justify-content: center;
 }
 
-main {
+.dashboard-root > main {
     width: 100%;
     height: 100%;
     display: flex;
