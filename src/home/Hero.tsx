@@ -2,8 +2,6 @@ import { useRef, useState, type ReactNode } from "react";
 import { cn } from "../utils/cn";
 
 export function Hero() {
-  const buttonClassName =
-    "overflow-hidden relative p-5 text-3xl font-semibold rounded-md drop-shadow-lg border-t-3 border-l-3 border-base-text/30";
   const loopingVideo = useRef<HTMLVideoElement>(null);
   const [loopingVideoIsPlaying, setLoopingVideoIsPlaying] = useState(false);
 
@@ -65,14 +63,17 @@ function Button({
   children: ReactNode;
 }) {
   return (
+    // Actual button, with border on bottom and left
     <button
       className={cn(
-        "overflow-hidden relative p-5 text-3xl font-semibold rounded-md drop-shadow-lg border-t-3 border-l-3 border-base-text/30",
+        "overflow-hidden relative p-5 text-3xl font-bold rounded-md drop-shadow-lg border-t-3 border-l-3 border-base-text/30 transition hover:scale-102",
         { "bg-accent-pink text-accent-pink-text": color === "pink" },
         { "bg-accent-yellow text-accent-yellow-text": color === "yellow" },
       )}
     >
+      {/* Border on bottom and right */}
       <span className="absolute inset-0 border-r-3 border-b-3 rounded-br-md opacity-70" />
+      {/* Gradient */}
       <span
         className={cn(
           "absolute inset-0 bg-linear-to-r opacity-50",
@@ -82,7 +83,14 @@ function Button({
           { "from-accent-yellow to-accent-orange": color === "yellow" },
         )}
       />
-      <span className="relative z-10">{children}</span>
+      {/* Visible button text */}
+      <span className="absolute -top-0.75 -left-0.75 bottom-0 right-0 flex items-center justify-center">
+        {children}
+      </span>
+      {/* Hover overlay */}
+      <span className="absolute inset-0 bg-white/10 opacity-0 hover:opacity-100 transition" />
+      {/* Invisible button text (needs to be here so that the button is the correct size) */}
+      <span className="opacity-0 pointer-events-none">{children}</span>
     </button>
   );
 }
