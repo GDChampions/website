@@ -1,5 +1,8 @@
 import { useRef, useState, type ReactNode } from "react";
 import { cn } from "../utils/cn";
+import championsLogo from "../assets/home/hero/champions_logo.webp";
+import initialHeroVideo from "../assets/home/hero/hero_initial.mp4";
+import loopingHeroVideo from "../assets/home/hero/hero_loop.mp4";
 
 export function Hero() {
   const loopingVideo = useRef<HTMLVideoElement>(null);
@@ -15,7 +18,7 @@ export function Hero() {
         className={cn("absolute inset-0 object-cover -z-20 size-full", {
           hidden: loopingVideoIsPlaying,
         })}
-        src="/src/assets/home/hero/hero_initial.mp4"
+        src={initialHeroVideo}
         onEnded={() => {
           void loopingVideo.current?.play();
         }}
@@ -29,7 +32,7 @@ export function Hero() {
         className={cn("absolute inset-0 object-cover -z-20 size-full", {
           hidden: !loopingVideoIsPlaying,
         })}
-        src="/src/assets/home/hero/hero_loop.mp4"
+        src={loopingHeroVideo}
         onPlay={() => {
           setLoopingVideoIsPlaying(true);
         }}
@@ -40,7 +43,7 @@ export function Hero() {
         <h1 className="w-xl aspect-504/205 drop-shadow-2xl">
           <img
             className="object-contain"
-            src="/src/assets/home/hero/full_logo.webp"
+            src={championsLogo}
           ></img>
         </h1>
         <p className="text-2xl font-bold text-white">
