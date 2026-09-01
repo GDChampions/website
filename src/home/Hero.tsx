@@ -9,7 +9,7 @@ export function Hero() {
   const [loopingVideoIsPlaying, setLoopingVideoIsPlaying] = useState(false);
 
   return (
-    <header className="relative h-200 flex flex-col items-center justify-center gap-6 bg-cover text-center">
+    <header className="relative h-196 flex flex-col items-center justify-center gap-6 bg-cover text-center">
       {/* Initial video. Plays once and then hides itself */}
       <video
         playsInline
@@ -69,7 +69,7 @@ function Button({
     // Actual button, with border on bottom and left
     <button
       className={cn(
-        "overflow-hidden relative p-5 text-3xl font-bold rounded-md drop-shadow-lg border-t-3 border-l-3 border-base-text/30 transition hover:scale-102",
+        "font-lexend overflow-hidden relative p-5 text-3xl font-semibold rounded-md drop-shadow-lg border-t-3 border-l-3 border-base-text/20 transition hover:scale-102",
         { "bg-accent-pink text-accent-pink-text": color === "pink" },
         { "bg-accent-yellow text-accent-yellow-text": color === "yellow" },
       )}

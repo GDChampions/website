@@ -1,5 +1,6 @@
 @import "tailwindcss";
-@import "./assets/fonts/compose.css";
+@import "./assets/fonts/compose/compose.css";
+@import "./assets/fonts/lexend/lexend.css";
 
 #root {
   width: 100%;
@@ -8,9 +9,9 @@
 }
 
 @theme {
-  --color-base-dark: hsl(274, 100%, 9%);
-  --color-base-medium: hsl(274, 100%, 15%);
-  --color-base-light: hsl(274, 100%, 21%);
+  --color-base-dark: hsl(274, 80%, 9%);
+  --color-base-medium: hsl(274, 80%, 15%);
+  --color-base-light: hsl(274, 80%, 21%);
 
   --color-base-text: hsl(290, 100%, 94%);
 
@@ -18,20 +19,22 @@
   --color-accent-purple-text: hsl(262, 67%, 15%);
 
   --color-accent-pink: hsl(323, 67%, 67%);
-  --color-accent-pink-text: hsl(323, 67%, 20%);
+  --color-accent-pink-text: hsl(323, 67%, 12%);
 
   --color-accent-yellow: hsl(51, 80%, 54%);
   --color-accent-yellow-text: hsl(51, 100%, 10%);
 
   --color-accent-orange: hsl(31, 80%, 54%);
   --color-accent-yellow-text: hsl(31, 100%, 10%);
+
+  --font-default: "Compose", sans-serif;
+  --font-lexend: "Lexend", sans-serif;
 }
 
 body {
-  font-family: "Compose", sans-serif;
+  font-family: var(--font-default);
   max-width: 100vw;
   min-height: 100vh;
   color: var(--color-base-text);
   background-color: var(--color-base-dark);
 }
-
