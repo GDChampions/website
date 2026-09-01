@@ -1,12 +1,25 @@
 @import "tailwindcss";
 
 #root {
-    width: 100%;
-    height: 100%;
-    overflow-x: hidden;
+  width: 100%;
+  height: 100%;
+  overflow-x: clip;
+}
+
+@theme {
+  --color-base-dark: hsl(274, 100%, 9%);
+  --color-base-medium: hsl(274, 100%, 15%);
+  --color-base-light: hsl(274, 100%, 21%);
+
+  --color-text: hsl(290, 100%, 94%);
+
+  --color-accent-purple: hsl(262, 67%, 58%);
+  --color-accent-yellow: hsl(51, 80%, 64%);
 }
 
 body {
-    width: 100vw;
-    min-height: 100vh;
+  max-width: 100vw;
+  min-height: 100vh;
+  color: var(--color-text);
+  background-color: var(--color-base-dark);
 }
