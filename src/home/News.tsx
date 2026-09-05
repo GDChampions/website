@@ -24,7 +24,7 @@ function NewsStory({ newsStory }: { newsStory: NewsStory }) {
   // There are lots of ways to do the key, it just has to be unique per story
   return (
     <li key={url} className="w-full border p-5">
-      <div className="border w-full aspect-square mb-3">Image goes here</div>
+      <div className="border w-full aspect-video mb-3">Image goes here</div>
       <p>{date}</p>
       <h3 className="text-xl font-bold mb-2">{title}</h3>
       <p>{description}</p>

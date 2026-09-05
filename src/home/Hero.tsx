@@ -9,7 +9,7 @@ export function Hero() {
   const [loopingVideoIsPlaying, setLoopingVideoIsPlaying] = useState(false);
 
   return (
-    <header className="relative h-196 flex flex-col items-center justify-center gap-6 bg-cover text-center">
+    <header className="relative h-176 flex flex-col items-center justify-center gap-6 bg-cover text-center">
       {/* Initial video. Plays once and then hides itself */}
       <video
         playsInline
@@ -38,12 +38,13 @@ export function Hero() {
         }}
       ></video>
       {/* Background blur overlay */}
-      <div className="absolute inset-0 bg-black/30 backdrop-blur-xl -z-10" />
+      <div className="absolute inset-0 bg-black/30 backdrop-blur-md -z-10" />
       <hgroup className="contents">
         <h1 className="w-xl aspect-504/205 drop-shadow-2xl">
           <img
             className="object-contain"
             src={championsLogo}
+            alt="Champions"
           ></img>
         </h1>
         <p className="text-2xl font-bold text-white">
@@ -87,7 +88,7 @@ function Button({
         )}
       />
       {/* Visible button text */}
-      <span className="absolute -top-0.75 -left-0.75 bottom-0 right-0 flex items-center justify-center">
+      <span className="absolute -top-0.75 -left-0.75 bottom-0 right-0 flex items-center justify-center text-shadow-sm">
         {children}
       </span>
       {/* Hover overlay */}
