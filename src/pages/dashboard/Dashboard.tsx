@@ -1,7 +1,9 @@
-import { useState } from 'react'
-import Whitelist from './Whitelist';
-import BuildIDs from './BuildIDs';
+import { useEffect, useState } from 'react'
+import Whitelist from './pages/Whitelist';
+import BuildIDs from './pages/BuildIDs';
 import "./dashboard.css"
+
+const AUTH_TOKEN_LOCAL_STORAGE_KEY = "token"
 
 function SidebarItem({ text, callback, isActive }: { text: string, callback: () => void, isActive: boolean }) {
     return (
@@ -13,6 +15,26 @@ function SidebarItem({ text, callback, isActive }: { text: string, callback: () 
 
 function Dashboard() {
     const [activeTab, setActiveTab] = useState("whitelist");
+    const [authenticated, setAuthenticated] = useState(false)
+    const [token, setToken] = useState("")
+
+    useEffect(() => {
+        const storedToken = localStorage.getItem(AUTH_TOKEN_LOCAL_STORAGE_KEY)
+        if (storedToken) {
+            (async () => {
+                const res = await fetch("http://localhost:41010/verify", {
+                    method: "POST",
+                    headers: {
+                        Authorization: `Bearer ${storedToken}`
+                    }
+                })
+                if (res.status == 200) {
+                    setToken(storedToken)
+                    setAuthenticated(true)
+                }
+            })()
+        }
+    }, [])
 
     return <div className="dashboard-root">
         <main>
