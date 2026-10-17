@@ -33,8 +33,8 @@
 
 body {
   font-family: var(--font-default);
-  max-width: 100vw;
-  min-height: 100vh;
+  width: 100vw;
+  height: 100vh;
   color: var(--color-base-text);
   background-color: var(--color-base-dark);
 }

@@ -12,9 +12,11 @@ createRoot(document.getElementById("root") as HTMLElement).render(
       <Layout>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/dashboard" element={<Dashboard />} />
         </Routes>
       </Layout>
+      <Routes>
+        <Route path="/dashboard" element={<Dashboard />} />
+      </Routes>
     </BrowserRouter>
   </StrictMode>,
 );

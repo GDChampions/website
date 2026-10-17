@@ -54,3 +54,13 @@
     background-color: rgb(35, 35, 35);
     border-radius: 0.5rem;
 }
+
+h1 {
+    font-size: xx-large;
+    font-weight: bolder;
+}
+
+h3 {
+    font-size: larger;
+    font-weight: 900;
+}
