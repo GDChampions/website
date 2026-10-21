@@ -35,9 +35,14 @@ function Dashboard() {
             })()
         }
     }, [])
-
     return <div className="dashboard-root">
         <main>
+            <p className={authenticated ? "visible" : "hidden"}>
+                authenticated
+            </p>
+            <p className={token ? "visible" : "hidden"}>
+                token works
+            </p>
             <div className="sidebar">
                 <SidebarItem
                     text='Whitelist'

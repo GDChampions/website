@@ -17,7 +17,7 @@ export default function Whitelist() {
 
             <h3>File Upload</h3>
             <input type="file" name="whitelists" ref={input} />
-            <button type="button" onClick={async (e) => {
+            <button type="button" onClick={async () => {
                 if (!input.current || !input.current.files || !input.current.files[0]) return
 
                 const file = input.current.files[0]
