@@ -1,5 +1,4 @@
 import { useRef, useState } from "react";
-import "./Whitelist.css"
 
 type Response = {
     message: string
@@ -11,13 +10,13 @@ export default function Whitelist() {
     const input = useRef<HTMLInputElement>(null);
     const [result, setResult] = useState<Response | null>(null);
     return <>
-        <center>
+        <div className="flex flex-col gap-4 items-center h-full">
             <h1>Champions Whitelist Manager</h1>
             <p>only for super cool internal people</p>
 
             <h3>File Upload</h3>
             <input type="file" name="whitelists" ref={input} />
-            <button type="button" onClick={async () => {
+            <button type="button" className="p-0.5" onClick={async () => {
                 if (!input.current || !input.current.files || !input.current.files[0]) return
 
                 const file = input.current.files[0]
@@ -34,6 +33,6 @@ export default function Whitelist() {
                 <p>Server responded with: <b>{result.message}</b></p>
                 <p>Users updated: <b>{result.rowCount}</b></p>
             </>}
-        </center>
+        </div>
     </>
 }

@@ -1,13 +1,15 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Whitelist from './pages/Whitelist';
 import BuildIDs from './pages/BuildIDs';
-import "./dashboard.css"
-
-const AUTH_TOKEN_LOCAL_STORAGE_KEY = "token"
 
 function SidebarItem({ text, callback, isActive }: { text: string, callback: () => void, isActive: boolean }) {
     return (
-        <div className={`sidebar-item ${isActive ? "active" : ""}`} onClick={callback}>
+        <div
+            className={`mx-2 my-2 cursor-pointer select-none rounded-2xl px-6 py-4 ${
+                isActive ? "bg-[rgb(65,65,65)]" : "bg-[rgb(50,50,50)]"
+            }`}
+            onClick={callback}
+        >
             {text}
         </div>
     )
@@ -15,35 +17,10 @@ function SidebarItem({ text, callback, isActive }: { text: string, callback: () 
 
 function Dashboard() {
     const [activeTab, setActiveTab] = useState("whitelist");
-    const [authenticated, setAuthenticated] = useState(false)
-    const [token, setToken] = useState("")
 
-    useEffect(() => {
-        const storedToken = localStorage.getItem(AUTH_TOKEN_LOCAL_STORAGE_KEY)
-        if (storedToken) {
-            (async () => {
-                const res = await fetch("http://localhost:41010/verify", {
-                    method: "POST",
-                    headers: {
-                        Authorization: `Bearer ${storedToken}`
-                    }
-                })
-                if (res.status == 200) {
-                    setToken(storedToken)
-                    setAuthenticated(true)
-                }
-            })()
-        }
-    }, [])
-    return <div className="dashboard-root">
-        <main>
-            <p className={authenticated ? "visible" : "hidden"}>
-                authenticated
-            </p>
-            <p className={token ? "visible" : "hidden"}>
-                token works
-            </p>
-            <div className="sidebar">
+    return <div className="flex h-full w-full items-center justify-center bg-[rgb(25,25,25)] text-center font-['Lucida_Sans','Lucida_Sans_Regular','Lucida_Grande','Lucida_Sans_Unicode',Geneva,Verdana,sans-serif] text-white">
+        <main className="m-6 flex h-full w-full flex-row items-center justify-around gap-1.25">
+            <div className="flex h-[calc(100%-3rem)] w-[10%] flex-col rounded-lg bg-[rgb(35,35,35)]">
                 <SidebarItem
                     text='Whitelist'
                     callback={() => {
@@ -66,7 +43,7 @@ function Dashboard() {
                     isActive={activeTab == "users"}
                 />
             </div>
-            <div className="content">
+            <div className="h-[calc(100%-3rem)] w-[90%] rounded-lg bg-[rgb(35,35,35)]">
                 {(() => {
                     switch (activeTab) {
                         case "whitelist": 
