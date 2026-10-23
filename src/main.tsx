@@ -9,6 +9,7 @@ import { News } from "./news/News";
 import { Competitive } from "./competitive/Competitive";
 import Dashboard from "./pages/dashboard/Dashboard";
 import { Layout } from "./layout/Layout";
+import Login from "./pages/Login";
 
 createRoot(document.getElementById("root") as HTMLElement).render(
   <StrictMode>
@@ -20,7 +21,7 @@ createRoot(document.getElementById("root") as HTMLElement).render(
           <Route path="/news" element={<News />} />
           <Route path="/competitive" element={<Competitive />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/login" element={<Login />} />
         </Routes>
       </Layout>
     </BrowserRouter>
