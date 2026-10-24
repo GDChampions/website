@@ -1,10 +1,11 @@
 
 import { useEffect, useState, type ReactNode } from "react";
 import { AuthContext } from "./AuthContext";
+import { API_BASE } from "../config";
 
 async function verifySession(): Promise<boolean> {
     try {
-        const res = await fetch("http://localhost:41010/verify", {
+        const res = await fetch(`${API_BASE}/verify`, {
             method: "POST",
             credentials: "include",
         });

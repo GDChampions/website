@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { API_BASE } from "../../../config";
 
 type Response = {
     message: string
@@ -22,7 +23,7 @@ export default function Whitelist() {
                 const file = input.current.files[0]
                 let formData = new FormData()
                 formData.append("file", file)
-                const result = await fetch("https://api.champions.gd/upload", {
+                const result = await fetch(`${API_BASE}/upload`, {
                     method: "POST",
                     body: formData
                 })

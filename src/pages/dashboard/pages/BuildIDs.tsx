@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react"
+import { API_BASE } from "../../../config"
 
 export default function BuildIDs() {
     const [builds, setBuilds] = useState<string[]>([])
 
     const getBuilds = async () => {
         const result = await (await fetch(
-            "http://localhost:41010/get-allowed-builds"
+            `${API_BASE}/get-allowed-builds`
         )).json()
         console.log(result)
         setBuilds(result)
