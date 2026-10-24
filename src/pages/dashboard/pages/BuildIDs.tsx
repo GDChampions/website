@@ -3,6 +3,8 @@ import { useEffect, useState, useRef } from "react"
 
 export default function BuildIDs() {
     const [builds, setBuilds] = useState<string[]>([])
+    const [isDeleting, setIsDeleting] = useState<boolean>(false)
+    const [buildsToDelete, setBuildsToDelete] = useState<string[]>([])
     const [errorString, setErrorString] = useState<string>()
 
     const buildIdInputRef = useRef<HTMLInputElement>(null)
@@ -16,6 +18,11 @@ export default function BuildIDs() {
         )).json()
         console.log(result)
         setBuilds(result)
+        if (buildIdInputRef.current) {
+            buildIdInputRef.current.value = ""
+        }
+        setIsDeleting(false)
+        setBuildsToDelete([])
     }
 
     const addToBuilds = async () => {
@@ -35,7 +42,7 @@ export default function BuildIDs() {
         getBuilds()
     }
 
-    const deleteBuild = async (buildID: string) => {
+    const deleteBuilds = async () => {
         const result = await fetch(`${API_BASE}/allowed-builds/`, {
             method: "DELETE",
             credentials: "include",
@@ -43,7 +50,7 @@ export default function BuildIDs() {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                buildID
+                buildIDs: buildsToDelete
             })
         })
         if (result.status != 200) {
@@ -73,12 +80,28 @@ export default function BuildIDs() {
                     }
                 }}
             />
+            
             <button
                 className="border border-base-text/15 bg-base-dark px-4 py-2 cursor-pointer text-sm font-medium text-base-text transition hover:bg-base-text/10"
                 onClick={(_) => addToBuilds()}
             >
                 Add to allowed builds
             </button>
+
+            <button
+                className="border border-base-text/15 bg-base-dark px-4 py-2 cursor-pointer text-sm font-medium text-base-text transition hover:bg-base-text/10"
+                onClick={(_) => setIsDeleting(!isDeleting)}
+            >
+                {isDeleting ? "Exit deletion mode" : "Enter deletion mode"}
+            </button>
+
+            {isDeleting && <button
+                className="border border-base-text/15 bg-base-dark px-4 py-2 cursor-pointer text-sm font-medium text-base-text transition hover:bg-base-text/10"
+                onClick={(_) => deleteBuilds()}
+            >
+                Delete builds
+            </button>}
+
             <p>
                 {errorString}
             </p>
@@ -92,20 +115,24 @@ export default function BuildIDs() {
                     className="flex flex-col gap-4 border border-base-text/10 bg-base-medium p-5 transition sm:flex-row sm:items-center sm:justify-between"
                 >
                     <div className="flex min-w-0 items-center gap-4">
+                        {isDeleting &&
+                            <input
+                                type="checkbox"
+                                checked={buildsToDelete.includes(build)}
+                                onChange={(e) => {
+                                    if (e.target.checked) {
+                                        setBuildsToDelete([...buildsToDelete, build])
+                                    } else if (!e.target.checked) {
+                                        setBuildsToDelete(buildsToDelete.filter((v) => v != build))  
+                                    }
+                                }}
+                            />
+                        }
                         <div className="min-w-0">
                             <p className="truncate text-lg font-semibold text-base-text">
                                 {build}
                             </p>
                         </div>
-                    </div>
-
-                    <div className="flex flex-wrap items-center gap-2">
-                        <button
-                            className="border border-base-text/15 bg-base-dark px-4 py-2 cursor-pointer text-sm font-medium text-base-text transition hover:bg-base-text/10"
-                            onClick={(_) => deleteBuild(build)}
-                        >
-                            Delete
-                        </button>
                     </div>
                 </div>
                 )
