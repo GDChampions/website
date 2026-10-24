@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import { useAuth } from "../auth/useAuth";
 
 export default function Login() {
     const [username, setUsername] = useState("");
@@ -7,6 +8,7 @@ export default function Login() {
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const { refreshAuth } = useAuth();
 
     async function login() {
         setError("");
@@ -27,6 +29,7 @@ export default function Login() {
                 return;
             }
 
+            await refreshAuth();
             navigate("/dashboard");
             window.location.reload();
         } catch (err) {
@@ -49,7 +52,7 @@ export default function Login() {
                 <div className="mb-4">
                     <h1 className="text-3xl font-bold">Champions</h1>
                     <p className="mt-2 text-base-text/60">
-                        Sign in to your accout
+                        Sign in to your account
                     </p>
                 </div>
 
