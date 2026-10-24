@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import type { User } from "../types";
 import { toast } from 'react-toastify';
+import { API_BASE } from "../../../config";
 
 export default function Users() {
     const [users, setUsers] = useState<User[]>([]);
@@ -32,7 +33,7 @@ export default function Users() {
 
     useEffect(() => {
         async function getUsers() {
-            const res = await fetch("http://localhost:41010/users", {
+            const res = await fetch(`${API_BASE}/users`, {
                 method: "GET",
                 credentials: "include",
             });
@@ -46,7 +47,7 @@ export default function Users() {
 
     async function changeRole(username: string, accID: number, role: number) {
         try {
-            const res = await fetch(`http://localhost:41010/users/${String(accID)}/role`, {
+            const res = await fetch(`${API_BASE}/users/${String(accID)}/role`, {
                 method: "POST",
                 credentials: "include",
                 headers: {
@@ -74,7 +75,7 @@ export default function Users() {
     async function generatePassword(username: string, accID: number) {
         try {
             const res = await fetch(
-                `http://localhost:41010/users/${accID}/genpass`,
+                `${API_BASE}/users/${String(accID)}/genpass`,
                 {
                     method: "POST",
                     credentials: "include",
