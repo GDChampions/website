@@ -1,1 +1,1 @@
-export const API_BASE = "https://api.champions.gd";
+export const API_BASE = import.meta.env.VITE_API_URL || "https://api.champions.gd";
