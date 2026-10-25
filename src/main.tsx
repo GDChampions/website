@@ -1,7 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
-import { BrowserRouter, Route, Routes } from "react-router";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router";
 import { AuthProvider } from "./auth/AuthProvider";
 import { ToastContainer } from 'react-toastify';
 
@@ -12,6 +12,9 @@ import { Competitive } from "./competitive/Competitive";
 import Dashboard from "./pages/dashboard/Dashboard";
 import { Layout } from "./layout/Layout";
 import Login from "./pages/Login";
+import Whitelist from "./pages/dashboard/pages/Whitelist";
+import BuildIDs from "./pages/dashboard/pages/BuildIDs";
+import Users from "./pages/dashboard/pages/Users";
 
 createRoot(document.getElementById("root") as HTMLElement).render(
   <StrictMode>
@@ -23,7 +26,15 @@ createRoot(document.getElementById("root") as HTMLElement).render(
             <Route path="/install" element={<Install />} />
             <Route path="/news" element={<News />} />
             <Route path="/competitive" element={<Competitive />} />
-            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/dashboard" element={<Dashboard />}>
+                <Route
+                    index
+                    element={<Navigate to="whitelist" replace />}
+                />
+                <Route path="whitelist" element={<Whitelist />} />
+                <Route path="build" element={<BuildIDs />} />
+                <Route path="users" element={<Users />} />
+            </Route>
             <Route path="/login" element={<Login />} />
           </Routes>
         </Layout>
