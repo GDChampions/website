@@ -19,6 +19,14 @@ export type SEData = {
     user?: User;
 };
 
+export type Season = {
+    id: number;
+    name: string | null;
+    startTime: string;
+    endTime: string;
+    createdAt: string;
+};
+
 export type RankData = {
     id: number;
     qid: string;

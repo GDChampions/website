@@ -37,6 +37,11 @@ function Dashboard() {
                         text="Users"
                         to="/dashboard/users"
                     />
+
+                    <SidebarItem
+                        text="Seasons"
+                        to="/dashboard/seasons"
+                    />
                 </aside>
 
                 <section className="min-w-0 flex-1 overflow-y-auto bg-base-dark">
