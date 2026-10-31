@@ -7,6 +7,13 @@ import { cn } from "../../../utils/cn";
 const buttonClass = "border border-base-text/15 bg-base-dark px-4 py-2 cursor-pointer text-sm font-medium text-base-text transition hover:bg-base-text/10 disabled:cursor-not-allowed disabled:opacity-50";
 const inputClass = "border border-base-text/15 bg-base-dark px-4 py-2 text-base-text outline-none scheme-dark transition focus:border-accent-pink";
 
+type SeasonForm = {
+    id: number;
+    name: string;
+    startTime: string;
+    endTime: string;
+};
+
 const statuses = {
     upcoming: { label: "Upcoming", className: "bg-blue-500/15 text-blue-400" },
     active: { label: "Active", className: "bg-accent-pink/15 text-accent-pink" },
@@ -41,6 +48,34 @@ async function fetchSeasons() {
     return data.sort((a, b) => a.id - b.id);
 }
 
+// the server upserts by ID, so this is used for both creating and editing.
+async function saveSeason(season: SeasonForm) {
+    const res = await fetch(`${API_BASE}/seasons`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            season: {
+                id: season.id,
+                // would be null rather than undefined since name is optional
+                name: season.name.trim() || null,
+                startTime: new Date(season.startTime).toISOString(),
+                endTime: new Date(season.endTime).toISOString(),
+            },
+        }),
+    });
+
+    if (!res.ok) throw new Error(await readError(res));
+}
+
+function timesError(startTime: string, endTime: string) {
+    if (!startTime || !endTime) return "Choose a start and end time.";
+    if (new Date(endTime) <= new Date(startTime)) return "The end time must be after the start time.";
+    return null;
+}
+
 // the same check that the server uses to find the current season.
 function seasonStatus(season: Season, now: number) {
     if (now < Date.parse(season.startTime)) return statuses.upcoming;
@@ -50,6 +85,12 @@ function seasonStatus(season: Season, now: number) {
 
 function formatTime(time: string) {
     return new Date(time).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
+}
+
+function toInputTime(time: string) {
+    const date = new Date(time);
+    date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
+    return date.toISOString().slice(0, 16);
 }
 
 export default function Seasons() {
@@ -64,6 +105,9 @@ export default function Seasons() {
     const [selecting, setSelecting] = useState(false);
     const [selected, setSelected] = useState<Set<number>>(new Set());
 
+    const [editing, setEditing] = useState<SeasonForm | null>(null);
+    const isEditing = editing !== null;
+
     // season IDs are not auto incremented, so suggest the one after the highest one.
     const nextID = seasonList.length === 0 ? 0 : Math.max(...seasonList.map((season) => season.id)) + 1;
 
@@ -72,6 +116,20 @@ export default function Seasons() {
             .then(setSeasonList)
             .catch((error: unknown) => toast.error(`Failed to load seasons: ${errorMessage(error)}`));
     }, []);
+
+    // We (yes we) love using keyboard events.
+    useEffect(() => {
+        if (!isEditing) return;
+
+        function closeOnEscape(e: KeyboardEvent) {
+            if (e.key === "Escape") setEditing(null);
+        }
+
+        window.addEventListener("keydown", closeOnEscape);
+        return () => {
+            window.removeEventListener("keydown", closeOnEscape);
+        };
+    }, [isEditing]);
 
     async function refreshSeasons() {
         try {
@@ -95,36 +153,14 @@ export default function Seasons() {
             return;
         }
 
-        if (!startTime || !endTime) {
-            toast.error("Choose a start and end time.");
-            return;
-        }
-
-        const start = new Date(startTime);
-        const end = new Date(endTime);
-        if (end <= start) {
-            toast.error("The end time must be after the start time.");
+        const timeError = timesError(startTime, endTime);
+        if (timeError) {
+            toast.error(timeError);
             return;
         }
 
         try {
-            const res = await fetch(`${API_BASE}/seasons`, {
-                method: "POST",
-                credentials: "include",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    season: {
-                        id,
-                        name: name.trim() || undefined,
-                        startTime: start.toISOString(),
-                        endTime: end.toISOString(),
-                    },
-                }),
-            });
-
-            if (!res.ok) throw new Error(await readError(res));
+            await saveSeason({ id, name, startTime, endTime });
 
             setSeasonID("");
             setName("");
@@ -134,6 +170,36 @@ export default function Seasons() {
             await refreshSeasons();
         } catch (error) {
             toast.error(`Failed to create season: ${errorMessage(error)}`);
+        }
+    }
+
+    // the season editing functions, very cool.
+    function startEditing(season: Season) {
+        setEditing({
+            id: season.id,
+            name: season.name ?? "",
+            startTime: toInputTime(season.startTime),
+            endTime: toInputTime(season.endTime),
+        });
+    }
+
+    async function editSeason() {
+        if (!editing) return;
+
+        const timeError = timesError(editing.startTime, editing.endTime);
+        if (timeError) {
+            toast.error(timeError);
+            return;
+        }
+
+        try {
+            await saveSeason(editing);
+
+            setEditing(null);
+            toast.success(`Season ${String(editing.id)} has been updated.`);
+            await refreshSeasons();
+        } catch (error) {
+            toast.error(`Failed to edit season: ${errorMessage(error)}`);
         }
     }
 
@@ -303,9 +369,11 @@ export default function Seasons() {
                         <div className="flex flex-col gap-3">
                             {seasonList.map((season) => {
                                 const status = seasonStatus(season, now);
+                                // label lets the whole card toggle checkbox, and also forward clicks to edit button.
+                                const Card = selecting ? "label" : "div";
 
                                 return (
-                                    <label
+                                    <Card
                                         key={season.id}
                                         className={cn(
                                             "flex flex-col gap-4 border border-base-text/10 bg-base-medium p-5 transition sm:flex-row sm:items-center sm:justify-between",
@@ -339,16 +407,110 @@ export default function Seasons() {
                                             </div>
                                         </div>
 
-                                        <span className={cn("w-fit px-3 py-1 text-sm font-semibold", status.className)}>
-                                            {status.label}
-                                        </span>
-                                    </label>
+                                        <div className="flex flex-wrap items-center gap-3">
+                                            <span className={cn("w-fit px-3 py-1 text-sm font-semibold", status.className)}>
+                                                {status.label}
+                                            </span>
+                                            {!selecting && (
+                                                <button
+                                                    onClick={() => {
+                                                        startEditing(season);
+                                                    }}
+                                                    className={buttonClass}
+                                                >
+                                                    Edit
+                                                </button>
+                                            )}
+                                        </div>
+                                    </Card>
                                 );
                             })}
                         </div>
                     )}
                 </section>
             </div>
+
+            {editing && (
+                <div
+                    onClick={(e) => {
+                        if (e.target === e.currentTarget) setEditing(null);
+                    }}
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-6"
+                >
+                    <form
+                        onSubmit={(e) => {
+                            e.preventDefault();
+                            void editSeason();
+                        }}
+                        className="flex w-full max-w-md flex-col gap-4 border border-base-text/10 bg-base-medium p-6"
+                    >
+                        <h3 className="text-xl font-semibold">Edit Season {editing.id}</h3>
+
+                        <label className="flex flex-col gap-1 text-sm text-base-text/70">
+                            ID
+                            <input
+                                type="text"
+                                value={editing.id}
+                                disabled
+                                title="Season IDs can't be changed."
+                                className={cn(inputClass, "cursor-not-allowed opacity-50")}
+                            />
+                        </label>
+                        <label className="flex flex-col gap-1 text-sm text-base-text/70">
+                            Name
+                            <input
+                                type="text"
+                                placeholder="Season name..."
+                                value={editing.name}
+                                onChange={(e) => {
+                                    setEditing({ ...editing, name: e.target.value });
+                                }}
+                                className={inputClass}
+                            />
+                        </label>
+                        <label className="flex flex-col gap-1 text-sm text-base-text/70">
+                            Start time
+                            <input
+                                type="datetime-local"
+                                value={editing.startTime}
+                                onChange={(e) => {
+                                    setEditing({ ...editing, startTime: e.target.value });
+                                }}
+                                className={inputClass}
+                            />
+                        </label>
+                        <label className="flex flex-col gap-1 text-sm text-base-text/70">
+                            End time
+                            <input
+                                type="datetime-local"
+                                value={editing.endTime}
+                                onChange={(e) => {
+                                    setEditing({ ...editing, endTime: e.target.value });
+                                }}
+                                className={inputClass}
+                            />
+                        </label>
+
+                        <div className="mt-2 flex gap-3">
+                            <button
+                                type="submit"
+                                className="cursor-pointer bg-accent-pink px-4 py-2 text-sm font-semibold text-white transition"
+                            >
+                                Save changes
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setEditing(null);
+                                }}
+                                className={buttonClass}
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            )}
         </div>
     );
 }
