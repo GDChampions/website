@@ -27,6 +27,16 @@ export type Season = {
     createdAt: string;
 };
 
+export type QueueOptions = {
+    qid: string;
+    matchSize: number;
+    difficultyMin?: number;
+    difficultyMax?: number;
+    startingMargin?: number;
+    marginIncrement?: number;
+    maxMargin?: number;
+};
+
 export type RankData = {
     id: number;
     qid: string;
