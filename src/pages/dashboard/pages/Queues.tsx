@@ -10,15 +10,6 @@ type Draft = Partial<Record<OptionKey, string>>;
 const buttonClass = "border border-base-text/15 bg-base-dark px-4 py-2 cursor-pointer text-sm font-medium text-base-text transition hover:bg-base-text/10 disabled:cursor-not-allowed disabled:opacity-50";
 const inputClass = "border border-base-text/15 bg-base-dark px-4 py-2 text-base-text outline-none transition focus:border-accent-pink";
 
-// ames of the queue buttons in the client (I think this is right hopefully).
-const queueNames: Partial<Record<string, string>> = {
-    "lr.nd": "Harder | Insane",
-    "lr.ld": "Easy Demon | Medium Demon",
-    "lr.md": "Hard Demon | Insane Demon",
-    "lr.hd": "Extreme Demon",
-    "lr.ranked": "Competitive",
-};
-
 // difficulty IDs used by the level API. 7 is not here, thanks gsv api for that lol.
 const difficulties: Record<number, string> = {
     2: "Easy",
@@ -152,13 +143,8 @@ function QueueCard({ queue, onSaved }: { queue: QueueOptions; onSaved: () => Pro
             }}
             className="flex flex-col gap-4 border border-base-text/10 bg-base-medium p-5"
         >
-            <div className="flex min-w-0 items-center gap-4">
-                <div className="flex items-center justify-center bg-accent-pink/15 px-3 py-3 text-sm font-bold text-accent-pink">
-                    {queue.qid}
-                </div>
-                <p className="truncate text-lg font-semibold text-base-text">
-                    {queueNames[queue.qid] ?? queue.qid}
-                </p>
+            <div className="w-fit border-l-2 border-accent-pink bg-accent-pink/15 px-4 py-2.5 text-base font-bold tracking-wide text-accent-pink">
+                {queue.qid}
             </div>
 
             <div className="flex flex-row flex-wrap items-end gap-3">
