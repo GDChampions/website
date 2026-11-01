@@ -16,6 +16,7 @@ import Whitelist from "./pages/dashboard/pages/Whitelist";
 import BuildIDs from "./pages/dashboard/pages/BuildIDs";
 import Users from "./pages/dashboard/pages/Users";
 import Seasons from "./pages/dashboard/pages/Seasons";
+import Queues from "./pages/dashboard/pages/Queues";
 
 createRoot(document.getElementById("root") as HTMLElement).render(
   <StrictMode>
@@ -36,6 +37,7 @@ createRoot(document.getElementById("root") as HTMLElement).render(
                 <Route path="build" element={<BuildIDs />} />
                 <Route path="users" element={<Users />} />
                 <Route path="seasons" element={<Seasons />} />
+                <Route path="queues" element={<Queues />} />
             </Route>
             <Route path="/login" element={<Login />} />
           </Routes>
