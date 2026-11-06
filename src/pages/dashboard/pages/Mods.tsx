@@ -56,7 +56,7 @@ async function addMod(list: ModList, modID: string, body: object) {
     if (!res.ok) throw new Error(await readError(res));
 }
 
-async function removeMods(list: ModList, mods: { modID: string; version?: string }[]) {
+async function removeMods(list: ModList, mods: { modID: string; version: string | null }[]) {
     const res = await fetch(`${API_BASE}/mods/${list}`, {
         method: "DELETE",
         credentials: "include",
@@ -344,6 +344,9 @@ function BannedMods() {
     const [viewing, setViewing] = useState<BannedMod | null>(null);
     const isViewing = viewing !== null;
 
+    // same mod can be blacklisted for more than one version.
+    const modKey = (mod: BannedMod) => String(mod.id);
+
     useEffect(() => {
         fetchMods<BannedMod>("banned")
             .then(setMods)
@@ -375,15 +378,17 @@ function BannedMods() {
 
     async function blacklistMod() {
         const id = modID.trim();
-        const modVersion = cleanVersion(version);
+        // null version will blacklist every version of said mod.
+        const modVersion = cleanVersion(version) || null;
+        const name = modVersion ? `${id} v${modVersion}` : `${id} (all versions)`;
 
         if (!modIDPattern.test(id)) {
             toast.error("Enter a valid mod ID, e.g. developer.mod-name.");
             return;
         }
-        // mod can only be blacklisted once, so adding again would overwrite.
-        if (mods.some((mod) => mod.modID === id)) {
-            toast.info(`${id} is already blacklisted.`);
+        // blacklisting the same version again would overwrite its options.
+        if (mods.some((mod) => mod.modID === id && mod.version === modVersion)) {
+            toast.info(`${name} is already blacklisted.`);
             return;
         }
 
@@ -398,13 +403,12 @@ function BannedMods() {
         }
 
         try {
-            // null version will blacklist every version of said mod.
-            await addMod("banned", id, { version: modVersion || null, options: parsedOptions });
+            await addMod("banned", id, { version: modVersion, options: parsedOptions });
 
             setModID("");
             setVersion("");
             setOptions("");
-            toast.success(`${id} has been blacklisted.`);
+            toast.success(`${name} has been blacklisted.`);
             await refreshMods();
         } catch (error) {
             toast.error(`Failed to blacklist mod: ${errorMessage(error)}`);
@@ -417,7 +421,9 @@ function BannedMods() {
     }
 
     async function removeSelected() {
-        const removing = [...selected].map((modID) => ({ modID }));
+        const removing = mods
+            .filter((mod) => selected.has(modKey(mod)))
+            .map(({ modID, version }) => ({ modID, version }));
 
         try {
             await removeMods("banned", removing);
@@ -442,7 +448,7 @@ function BannedMods() {
                         setSelecting(true);
                     }}
                     onSelectAll={() => {
-                        setSelected(new Set(mods.map((mod) => mod.modID)));
+                        setSelected(new Set(mods.map(modKey)));
                     }}
                     onRemove={() => void removeSelected()}
                     onCancel={stopSelecting}
@@ -508,11 +514,11 @@ function BannedMods() {
                 <div className="flex flex-col gap-3">
                     {mods.map((mod) => (
                         <ModCard
-                            key={mod.modID}
+                            key={modKey(mod)}
                             selecting={selecting}
-                            checked={selected.has(mod.modID)}
+                            checked={selected.has(modKey(mod))}
                             onToggle={() => {
-                                setSelected((prev) => toggle(prev, mod.modID));
+                                setSelected((prev) => toggle(prev, modKey(mod)));
                             }}
                         >
                             <p className="min-w-0 truncate text-lg font-semibold text-base-text">

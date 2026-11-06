@@ -44,6 +44,7 @@ export type AllowedMod = {
 };
 
 export type BannedMod = {
+    id: number;
     modID: string;
     version: string | null;
     options: unknown;
