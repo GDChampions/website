@@ -37,6 +37,18 @@ export type QueueOptions = {
     maxMargin?: number;
 };
 
+export type AllowedMod = {
+    modID: string;
+    version: string;
+    hash: string;
+};
+
+export type BannedMod = {
+    modID: string;
+    version: string | null;
+    options: unknown;
+};
+
 export type RankData = {
     id: number;
     qid: string;

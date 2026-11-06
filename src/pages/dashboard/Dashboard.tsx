@@ -47,6 +47,11 @@ function Dashboard() {
                         text="Queues"
                         to="/dashboard/queues"
                     />
+
+                    <SidebarItem
+                        text="Mods"
+                        to="/dashboard/mods"
+                    />
                 </aside>
 
                 <section className="min-w-0 flex-1 bg-base-dark">

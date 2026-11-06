@@ -17,6 +17,7 @@ import BuildIDs from "./pages/dashboard/pages/BuildIDs";
 import Users from "./pages/dashboard/pages/Users";
 import Seasons from "./pages/dashboard/pages/Seasons";
 import Queues from "./pages/dashboard/pages/Queues";
+import Mods from "./pages/dashboard/pages/Mods";
 
 createRoot(document.getElementById("root") as HTMLElement).render(
   <StrictMode>
@@ -38,6 +39,7 @@ createRoot(document.getElementById("root") as HTMLElement).render(
                 <Route path="users" element={<Users />} />
                 <Route path="seasons" element={<Seasons />} />
                 <Route path="queues" element={<Queues />} />
+                <Route path="mods" element={<Mods />} />
             </Route>
             <Route path="/login" element={<Login />} />
           </Routes>
