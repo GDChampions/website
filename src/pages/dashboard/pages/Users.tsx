@@ -5,6 +5,7 @@ import { API_BASE } from "../../../config";
 
 export default function Users() {
     const [users, setUsers] = useState<User[]>([]);
+    const [page, setPage] = useState<number>(1);
     // not needed right now apparently
     // const [staffDropdown, setStaffDropdown] = useState<number | null>(null);
 
@@ -33,7 +34,7 @@ export default function Users() {
 
     useEffect(() => {
         async function getUsers() {
-            const res = await fetch(`${API_BASE}/users`, {
+            const res = await fetch(`${API_BASE}/users?page=${page}`, {
                 method: "GET",
                 credentials: "include",
             });
@@ -43,7 +44,7 @@ export default function Users() {
         }
 
         void getUsers();
-    }, []);
+    }, [page]);
 
     async function changeRole(username: string, accID: number, role: number) {
         try {
@@ -204,6 +205,24 @@ export default function Users() {
                             </div>
                         </div>
                     ))}
+                </div>
+
+                <div className="text-center flex flex-row items-center justify-center gap-3 p-6">
+                    <button
+                        onClick={() => setPage(Math.max(page - 1, 1))}
+                        className="border border-base-text/15 bg-base-dark px-4 py-2 cursor-pointer text-sm font-medium text-base-text transition hover:bg-base-text/10"
+                    >
+                        {"<"}
+                    </button>
+
+                    <p>Page {page}</p>
+                    
+                    <button
+                        onClick={() => setPage(page + 1)}
+                        className="border border-base-text/15 bg-base-dark px-4 py-2 cursor-pointer text-sm font-medium text-base-text transition hover:bg-base-text/10"
+                    >
+                        {">"}
+                    </button>
                 </div>
             </div>
         </>
